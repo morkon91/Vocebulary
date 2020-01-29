@@ -18,30 +18,34 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.colibrivocebulary.Adapter.WordAdapter;
 import com.example.colibrivocebulary.App;
+import com.example.colibrivocebulary.Presenter.IWordListView;
+import com.example.colibrivocebulary.Presenter.WordPresenter;
 import com.example.colibrivocebulary.R;
 import com.example.colibrivocebulary.db.AppDataBase;
 import com.example.colibrivocebulary.entity.Word;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class WordsActivity extends AppCompatActivity {
+public class WordsActivity extends AppCompatActivity implements IWordListView {
 
     private Toolbar toolbar;
     private EditText searchEditText;
     private FloatingActionButton addButton;
     private RecyclerView recyclerView;
 
-    private WordAdapter wordAdapter;
+    private static WordAdapter wordAdapter;
+    private final int ADD_WORD_REQUEST_CODE = 101;
 
-    private AppDataBase appDataBase = App.getAppDataBase();
+    private WordPresenter wordPresenter = new WordPresenter(this);
 
-    private static final int ADD_WORD_REQUEST_CODE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,7 @@ public class WordsActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setSubtitle("Очень странный переводчик )))");
+        Objects.requireNonNull(getSupportActionBar()).setSubtitle("Очень странный словарик :-)");
         Objects.requireNonNull(getSupportActionBar()).setTitle("Переводчик");
 
         searchEditText = findViewById(R.id.search_edit_text);
@@ -68,27 +72,18 @@ public class WordsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.word_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
-        wordAdapter = new WordAdapter();
+        wordAdapter = new WordAdapter(this);
         recyclerView.setAdapter(wordAdapter);
 
         loadWords();
-    }
 
-    @SuppressLint("StaticFieldLeak")
-    private void loadWords(){
-        new AsyncTask<Void, Void, List<Word>>() {
-            @Override
-            protected List<Word> doInBackground(Void... voids) {
-                return appDataBase.getWordDao().getWords();
-            }
-
-            @Override
-            protected void onPostExecute(List<Word> words) {
-                wordAdapter.setWords(words);
-            }
-        }.execute();
 
     }
+
+    public void loadWords() {
+        wordPresenter.loadWordList();
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -96,22 +91,37 @@ public class WordsActivity extends AppCompatActivity {
 
         if (requestCode == ADD_WORD_REQUEST_CODE && resultCode == RESULT_OK) {
             loadWords();
+
         }
     }
+
+    @Override
+    public void onLoadWordListSuccess(List<Word> words) {
+        wordAdapter.setWords(words);
+    }
+
+
+    //Работа с менюшкой тулбара
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (searchEditText.getVisibility() != View.VISIBLE) {
             searchEditText.setVisibility(View.VISIBLE);
 
-        }else {
+        } else {
             searchEditText.setVisibility(View.GONE);
         }
         return true;
+    }
+
+    @Override
+    public void onLoadWordListProgress() {
+        //no op
     }
 }

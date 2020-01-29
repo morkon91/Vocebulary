@@ -2,6 +2,7 @@ package com.example.colibrivocebulary.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -49,6 +50,7 @@ public class AddWordActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void saveToDataBase(final Word word){
         new AsyncTask<Void, Void, Void>() {
             @Override

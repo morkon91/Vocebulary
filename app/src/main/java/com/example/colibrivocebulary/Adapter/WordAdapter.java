@@ -2,9 +2,12 @@ package com.example.colibrivocebulary.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,9 +20,11 @@ import java.util.List;
 
 public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
     private List<Word> words;
+    private Context mContext;
 
-    public WordAdapter() {
+    public WordAdapter(Context mContext) {
         words = new ArrayList<>();
+        this.mContext = mContext;
     }
 
     class WordViewHolder extends RecyclerView.ViewHolder {
@@ -58,9 +63,36 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WordViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final WordViewHolder holder, int position) {
         Word word = words.get(position);
         holder.bind(word);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(mContext, holder.itemView);
+                popupMenu.inflate(R.menu.option_menu);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.menu_item_delete:
+                                Toast.makeText(mContext, "Запись будет удалена потом :)", Toast.LENGTH_LONG).show();
+                                break;
+                            case R.id.menu_item_egit:
+                                Toast.makeText(mContext, "Запись будет изменена потом :)", Toast.LENGTH_LONG).show();
+                                break;
+                            default:
+                                break;
+
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
+
     }
 
     @Override

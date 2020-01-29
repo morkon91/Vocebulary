@@ -31,7 +31,7 @@ public class Word {
         this.englishVersion = englishVersion;
     }
 
-    public void setRussianVersion(String russianVersion) {
+    public void setRussianVersion(String russianVersion)  {
         this.russianVersion = russianVersion;
     }
 

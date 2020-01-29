@@ -1,6 +1,7 @@
 package com.example.colibrivocebulary.db;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -16,4 +17,8 @@ public interface WordDao {
 
     @Query("SELECT * FROM Word ")
     List<Word> getWords();
+
+    @Delete
+    void delete (Word word);
+
 }
