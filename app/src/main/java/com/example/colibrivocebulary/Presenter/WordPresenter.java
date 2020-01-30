@@ -12,7 +12,7 @@ import java.util.List;
 
 public class WordPresenter {
 
-    private static AppDataBase appDataBase = App.getAppDataBase();
+    private AppDataBase appDataBase = App.getAppDataBase();
 
     private final IWordListView view;
 

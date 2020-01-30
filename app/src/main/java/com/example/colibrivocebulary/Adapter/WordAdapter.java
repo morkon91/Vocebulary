@@ -22,6 +22,12 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     private List<Word> words;
     private Context mContext;
 
+    private onPopupClickListener onPopupClickListener;
+
+    public void setOnPopupClickListener(onPopupClickListener onPopupClickListener) {
+        this.onPopupClickListener = onPopupClickListener;
+    }
+
     public WordAdapter(Context mContext) {
         words = new ArrayList<>();
         this.mContext = mContext;
@@ -64,7 +70,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull final WordViewHolder holder, int position) {
-        Word word = words.get(position);
+        final Word word = words.get(position);
         holder.bind(word);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -77,14 +83,14 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu_item_delete:
-                                Toast.makeText(mContext, "Запись будет удалена потом :)", Toast.LENGTH_LONG).show();
+                                onPopupClickListener.deleteWord(word);
                                 break;
                             case R.id.menu_item_egit:
-                                Toast.makeText(mContext, "Запись будет изменена потом :)", Toast.LENGTH_LONG).show();
+                                onPopupClickListener.editWord(word);
+
                                 break;
                             default:
                                 break;
-
                         }
                         return false;
                     }
@@ -101,4 +107,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     }
 
 
+
+    public interface onPopupClickListener {
+        void deleteWord(Word word);
+        void editWord(Word word);
+    }
 }
