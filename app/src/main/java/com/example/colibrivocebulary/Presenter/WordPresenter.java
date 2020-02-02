@@ -41,7 +41,22 @@ public class WordPresenter {
         }.execute();
     }
 
+    @SuppressLint("StaticFieldLeak")
+    public void deleteWordFromList(final Word word) {
+
+        new AsyncTask<Void, Void, Word>() {
 
 
+            @Override
+            protected Word doInBackground(Void... voids) {
+                appDataBase.getWordDao().delete(word);
+                return word;
+            }
 
+            @Override
+            protected void onPostExecute(Word word) {
+                view.onDeleteWordSuccess(word);
+            }
+        }.execute();
+    }
 }

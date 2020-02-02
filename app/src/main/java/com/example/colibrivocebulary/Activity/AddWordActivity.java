@@ -2,8 +2,6 @@ package com.example.colibrivocebulary.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,9 +13,6 @@ import com.example.colibrivocebulary.Presenter.AddWordPresenter;
 import com.example.colibrivocebulary.Presenter.IAddWordPresenter;
 import com.example.colibrivocebulary.R;
 import com.example.colibrivocebulary.db.AppDataBase;
-import com.example.colibrivocebulary.entity.Word;
-
-import java.util.List;
 
 public class AddWordActivity extends AppCompatActivity  implements IAddWordPresenter {
 
@@ -45,18 +40,25 @@ public class AddWordActivity extends AppCompatActivity  implements IAddWordPrese
                 String wordString = wordEditText.getText().toString();
                 String translationString = translationEditText.getText().toString();
 
-                String msg = "Записали слово: " + wordString + "; " + translationString;
 
                 addWordPresenter.addNewWord(wordString, translationString);
 
 //                Word word = new Word(wordString, translationString);
 //                saveToDataBase(word);
 
-                Toast.makeText(AddWordActivity.this, msg, Toast.LENGTH_SHORT).show();
+
 
             }
         });
     }
+
+    @Override
+    public void onAddWordListSuccess(String msg) {
+        setResult(RESULT_OK);
+        Toast.makeText(AddWordActivity.this, msg, Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
 
 //    @SuppressLint("StaticFieldLeak")
 //    private void saveToDataBase(final Word word){
@@ -75,9 +77,5 @@ public class AddWordActivity extends AppCompatActivity  implements IAddWordPrese
 //        }.execute();
 //    }
 
-    @Override
-    public void onAddWordListSuccess() {
-        setResult(RESULT_OK);
-        finish();
-    }
+
 }

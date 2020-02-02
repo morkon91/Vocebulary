@@ -4,7 +4,6 @@ import android.app.Application;
 
 import androidx.room.Room;
 
-import com.example.colibrivocebulary.Presenter.AddWordPresenter;
 import com.example.colibrivocebulary.db.AppDataBase;
 
 public class App extends Application {

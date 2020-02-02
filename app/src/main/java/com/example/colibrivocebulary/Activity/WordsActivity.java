@@ -72,10 +72,13 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
 
         loadWords();
 
+
+        // Обработка нажатий на позиции в списке слов (RecyclerView)
         wordAdapter.setOnPopupClickListener(new WordAdapter.onPopupClickListener() {
             @Override
             public void deleteWord(Word word) {
-                Toast.makeText(WordsActivity.this, "Запись будет удалена потом " + word.getRussianVersion(), Toast.LENGTH_LONG).show();
+                wordPresenter.deleteWordFromList(word);
+
             }
 
             @Override
@@ -104,25 +107,19 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
     @Override
     public void onLoadWordListSuccess(List<Word> words) {
         wordAdapter.setWords(words);
+
+    }
+
+    @Override
+    public void onDeleteWordSuccess(Word word) {
+        Toast.makeText(WordsActivity.this, "Удалено слово: " + word.getRussianVersion(), Toast.LENGTH_LONG).show();
+        loadWords();
     }
 
     @Override
     public void onLoadWordListProgress() {
         //no op
     }
-
-
-    //Обработка нажатий на всплывающее меню в RecyclerView (PopupMenu)
-//    @Override
-//    public void deleteWord() {
-//
-//    }
-//
-//    @Override
-//    public void editWord() {
-//
-//    }
-
 
     //Работа с менюшкой тулбара
 
