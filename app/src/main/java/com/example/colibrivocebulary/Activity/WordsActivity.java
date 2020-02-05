@@ -22,8 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.colibrivocebulary.Adapter.WordAdapter;
-import com.example.colibrivocebulary.Presenter.IWordListView;
-import com.example.colibrivocebulary.Presenter.WordPresenter;
+import com.example.colibrivocebulary.presenter.IWordListView;
+import com.example.colibrivocebulary.presenter.WordPresenter;
 import com.example.colibrivocebulary.R;
 import com.example.colibrivocebulary.entity.Word;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -56,8 +56,9 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
 
         @Override
         public void afterTextChanged(Editable s) {
-            Toast.makeText(WordsActivity.this, "Введен текст поиска:   " + searchEditText.getText().toString(),
-                    Toast.LENGTH_SHORT).show();
+            wordPresenter.searchWordByEnglishVersion(searchEditText.getText().toString());
+//            Toast.makeText(WordsActivity.this, "Введен текст поиска:   " + searchEditText.getText().toString(),
+//                    Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -138,9 +139,10 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
     }
 
     @Override
-    public void onLoadWordListProgress() {
-        //no op
+    public void onSearchWordListSuccessByEnglishVersion(List<Word> searchedWords) {
+        wordAdapter.setWords(searchedWords);
     }
+
 
     //Работа с менюшкой тулбара
 

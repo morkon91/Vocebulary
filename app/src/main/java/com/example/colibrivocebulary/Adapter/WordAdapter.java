@@ -52,9 +52,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
 
 
     public void setWords(List<Word> words) {
-        if (!this.words.isEmpty()) {
-            this.words.clear();
-        }
+        // if (!this.words.isEmpty()) {
+        this.words.clear();
+        //}
 
         this.words.addAll(words);
         notifyDataSetChanged();
@@ -73,30 +73,24 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         final Word word = words.get(position);
         holder.bind(word);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(mContext, holder.itemView);
-                popupMenu.inflate(R.menu.option_menu);
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.menu_item_delete:
-                                onPopupClickListener.deleteWord(word);
-                                break;
-                            case R.id.menu_item_egit:
-                                onPopupClickListener.editWord(word);
-
-                                break;
-                            default:
-                                break;
-                        }
-                        return false;
-                    }
-                });
-                popupMenu.show();
-            }
+        holder.itemView.setOnLongClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(mContext, holder.itemView);
+            popupMenu.inflate(R.menu.option_menu);
+            popupMenu.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.menu_item_delete:
+                        onPopupClickListener.deleteWord(word);
+                        break;
+                    case R.id.menu_item_egit:
+                        onPopupClickListener.editWord(word);
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            });
+            popupMenu.show();
+            return true;
         });
 
     }
@@ -107,9 +101,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     }
 
 
-
     public interface onPopupClickListener {
         void deleteWord(Word word);
+
         void editWord(Word word);
     }
 }

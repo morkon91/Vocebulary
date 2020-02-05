@@ -1,4 +1,4 @@
-package com.example.colibrivocebulary.Presenter;
+package com.example.colibrivocebulary.presenter;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
@@ -13,20 +13,18 @@ public class AddWordPresenter {
 
     private static AppDataBase appDataBase = App.getAppDataBase();
 
-    private final IAddWordPresenter view;
+    private final IAddWordView view;
     private Word newWord;
     private String msg;
 
 
 
-    public AddWordPresenter(IAddWordPresenter view) {
+    public AddWordPresenter(IAddWordView view) {
         this.view = view;
     }
 
     @SuppressLint("StaticFieldLeak")
     public void addNewWord(final String wordString, final String translationString) {
-
-
 
         new AsyncTask<Void, Void, Void>() {
             @Override

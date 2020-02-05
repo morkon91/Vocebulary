@@ -1,6 +1,6 @@
 package com.example.colibrivocebulary.word_translation;
 
-public interface IYandexAPI {
+public interface ITranslateWordView {
 
     void onTranslateWordSuccess(String s);
 }

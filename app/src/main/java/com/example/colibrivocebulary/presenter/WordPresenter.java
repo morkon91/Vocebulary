@@ -1,4 +1,4 @@
-package com.example.colibrivocebulary.Presenter;
+package com.example.colibrivocebulary.presenter;
 
 
 import android.annotation.SuppressLint;
@@ -15,13 +15,14 @@ public class WordPresenter {
     private AppDataBase appDataBase = App.getAppDataBase();
 
     private final IWordListView view;
+    private AsyncTask searchAsyncTask;
 
     public WordPresenter(IWordListView view) {
         this.view = view;
     }
 
     @SuppressLint("StaticFieldLeak")
-    public void loadWordList(){
+    public void loadWordList() {
 
         new AsyncTask<Void, Void, List<Word>>() {
             @Override
@@ -31,7 +32,6 @@ public class WordPresenter {
 
             @Override
             protected void onPreExecute() {
-                view.onLoadWordListProgress();
             }
 
             @Override
@@ -60,7 +60,26 @@ public class WordPresenter {
         }.execute();
     }
 
-    public void searchWordByEnglishVersion(String searchEnglishVersion) {
+    @SuppressLint("StaticFieldLeak")
+    public void searchWordByEnglishVersion(String searchByEnglishVersion) {
+        final String searchWord = searchByEnglishVersion + "%";
+
+        if (searchAsyncTask != null) {
+            searchAsyncTask.cancel(true);
+        }
+
+        searchAsyncTask = new AsyncTask<Void, Void, List<Word>>() {
+
+            @Override
+            protected List<Word> doInBackground(Void... voids) {
+                return appDataBase.getWordDao().filterByEnglishWord(searchWord);
+            }
+
+            @Override
+            protected void onPostExecute(List<Word> words) {
+                view.onSearchWordListSuccessByEnglishVersion(words);
+            }
+        }.execute();
 
     }
 }

@@ -8,22 +8,22 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.colibrivocebulary.Presenter.AddWordPresenter;
-import com.example.colibrivocebulary.Presenter.IAddWordPresenter;
+import com.example.colibrivocebulary.presenter.IAddWordView;
 import com.example.colibrivocebulary.R;
-import com.example.colibrivocebulary.word_translation.IYandexAPI;
-import com.example.colibrivocebulary.word_translation.TranslateYandex;
+import com.example.colibrivocebulary.word_translation.ITranslateWordView;
+import com.example.colibrivocebulary.word_translation.YandexTranslate;
 
-public class AddWordActivity extends AppCompatActivity implements IAddWordPresenter, IYandexAPI {
+public class AddWordActivity extends AppCompatActivity implements IAddWordView, ITranslateWordView {
 
     private EditText wordEditText;
     private EditText translationEditText;
     private Button saveButton;
     private Button translateButton;
 
-    private TranslateYandex translateYandex;
 
-    private AddWordPresenter addWordPresenter = new AddWordPresenter(this);
+    private YandexTranslate translateYandex;
+
+    private com.example.colibrivocebulary.presenter.AddWordPresenter addWordPresenter = new com.example.colibrivocebulary.presenter.AddWordPresenter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +55,8 @@ public class AddWordActivity extends AppCompatActivity implements IAddWordPresen
             @Override
             public void onClick(View v) {
                 String wordString = wordEditText.getText().toString();
-                if (wordString.matches("[A-Za-z]+")) {
-                    translateYandex = new TranslateYandex(AddWordActivity.this);
+                if (true) {
+                    translateYandex = new YandexTranslate(AddWordActivity.this);
                     translateYandex.getTranslate_EN_RU(wordString);
                 }else if (wordString.isEmpty()){
                     Toast.makeText(AddWordActivity.this, "Ошибка! Введите, пожалуста, слово!",
@@ -68,6 +68,12 @@ public class AddWordActivity extends AppCompatActivity implements IAddWordPresen
             }
         });
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        translateYandex.cancelTask();
     }
 
     @Override
