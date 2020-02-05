@@ -21,4 +21,7 @@ public interface WordDao {
     @Delete
     void delete (Word word);
 
+    @Query("SELECT * FROM Word WHERE englishVersion LIKE :filterWord")
+    List<Word> filterByEnglishWord(String filterWord);
+
 }

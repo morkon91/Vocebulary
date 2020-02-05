@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +43,24 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
 
     private WordPresenter wordPresenter = new WordPresenter(this);
 
+    private final TextWatcher searchTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            Toast.makeText(WordsActivity.this, "Введен текст поиска:   " + searchEditText.getText().toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +83,7 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
 
         searchEditText = findViewById(R.id.search_edit_text);
         searchEditText.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        searchEditText.addTextChangedListener(searchTextWatcher);
 
         recyclerView = findViewById(R.id.word_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -133,7 +154,6 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (searchEditText.getVisibility() != View.VISIBLE) {
             searchEditText.setVisibility(View.VISIBLE);
-
         } else {
             searchEditText.setVisibility(View.GONE);
         }

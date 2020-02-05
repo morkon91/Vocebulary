@@ -59,4 +59,8 @@ public class WordPresenter {
             }
         }.execute();
     }
+
+    public void searchWordByEnglishVersion(String searchEnglishVersion) {
+
+    }
 }

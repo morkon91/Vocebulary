@@ -18,7 +18,7 @@ public class Word {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Word word = (Word) o;
-        return englishVersion.equals(word.englishVersion) ||
+        return englishVersion.equals(word.englishVersion)&&
                 russianVersion.equals(word.russianVersion);
     }
 

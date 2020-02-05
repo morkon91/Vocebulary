@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">ColibriVocebulary</string>
-    <string name="enter_word">Введите слово</string>
-    <string name="enter_translation">Введите перевод</string>
+    <string name="app_name">Your Vocabulary</string>
+    <string name="enter_word">English word</string>
+    <string name="enter_translation">Перевод</string>
     <string name="add">Добавить</string>
+    <string name="translate">Яндекс.Переводчик</string>
     <string name="request_search">Что-то будем искать?</string>
 </resources>
