@@ -18,7 +18,7 @@ public class Word {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Word word = (Word) o;
-        return englishVersion.equals(word.englishVersion)&&
+        return englishVersion.equals(word.englishVersion) &&
                 russianVersion.equals(word.russianVersion);
     }
 
@@ -31,7 +31,7 @@ public class Word {
         this.englishVersion = englishVersion;
     }
 
-    public void setRussianVersion(String russianVersion)  {
+    public void setRussianVersion(String russianVersion) {
         this.russianVersion = russianVersion;
     }
 
@@ -43,7 +43,7 @@ public class Word {
         return russianVersion;
     }
 
-    public Word(String englishVersion, String russianVersion) {
+    public Word(String russianVersion, String englishVersion) {
         this.englishVersion = englishVersion;
         this.russianVersion = russianVersion;
     }

@@ -40,6 +40,11 @@ public class YandexTranslate {
         asyncTask = new AsyncTask<Void, Void, String>() {
 
             @Override
+            protected void onPreExecute() {
+                view.onSearchTranslateWordProgress();
+            }
+
+            @Override
             protected String doInBackground(Void... voids) {
                 String newTranslatedRusWord = "Нет перевода";
                 Map<String, String> mapJson = new HashMap<>();
@@ -48,11 +53,17 @@ public class YandexTranslate {
                 mapJson.put("format", "plain");
                 mapJson.put("options", "1");
 
+                try {
+                    Thread.sleep(700);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
                 Call<TranslateResponse> call = yandexTranslateApi.getTranslate_En_Ru(mapJson, newEnglishWord);
                 try {
                     Response<TranslateResponse> response = call.execute();
                     TranslateResponse translateResponse = response.body();
+
                     if (!translateResponse.getTextList().isEmpty()) {
                         newTranslatedRusWord = translateResponse.getTextList().get(0);
                     } else {
@@ -69,6 +80,8 @@ public class YandexTranslate {
             protected void onPostExecute(String s) {
                 view.onTranslateWordSuccess(s);
             }
+
+
         }.execute();
     }
 

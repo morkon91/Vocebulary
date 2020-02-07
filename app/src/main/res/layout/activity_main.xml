@@ -19,9 +19,13 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="61dp"
         android:background="@color/toolbar"
+        app:layout_constraintBottom_toTopOf="@+id/word_recycler_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
@@ -34,10 +38,11 @@
             android:hint="@string/request_search"
             android:inputType=""
             android:minWidth="100dp"
+            android:singleLine="true"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
-            android:textCursorDrawable="@color/white"
-            android:visibility="gone" />
+            android:textCursorDrawable="@drawable/black_cursor"
+            android:visibility="visible" />
 
     </androidx.appcompat.widget.Toolbar>
 

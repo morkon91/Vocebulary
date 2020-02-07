@@ -1,14 +1,18 @@
 package com.example.colibrivocebulary.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -57,8 +61,6 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
         @Override
         public void afterTextChanged(Editable s) {
             wordPresenter.searchWordByEnglishVersion(searchEditText.getText().toString());
-//            Toast.makeText(WordsActivity.this, "Введен текст поиска:   " + searchEditText.getText().toString(),
-//                    Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -79,8 +81,10 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        toolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
         Objects.requireNonNull(getSupportActionBar()).setSubtitle("Очень странный словарик :-)");
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Переводчик");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Твой словарик");
 
         searchEditText = findViewById(R.id.search_edit_text);
         searchEditText.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
@@ -154,13 +158,16 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (searchEditText.getVisibility() != View.VISIBLE) {
             searchEditText.setVisibility(View.VISIBLE);
+            searchEditText.requestFocus();
+            im.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
         } else {
             searchEditText.setVisibility(View.GONE);
+            im.hideSoftInputFromWindow(searchEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
         return true;
     }
-
 
 }

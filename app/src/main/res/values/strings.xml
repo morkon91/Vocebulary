@@ -4,5 +4,5 @@
     <string name="enter_translation">Перевод</string>
     <string name="add">Добавить</string>
     <string name="translate">Яндекс.Переводчик</string>
-    <string name="request_search">Что-то будем искать?</string>
+    <string name="request_search">Что будем искать?</string>
 </resources>

@@ -37,14 +37,14 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         private TextView englishVersionTextView;
         private TextView russianVersionTextView;
 
-        public WordViewHolder(@NonNull View itemView) {
+        WordViewHolder(@NonNull View itemView) {
             super(itemView);
 
             englishVersionTextView = itemView.findViewById(R.id.english_version_text_view);
             russianVersionTextView = itemView.findViewById(R.id.russian_version_text_view);
         }
 
-        public void bind(Word word) {
+        void bind(Word word) {
             englishVersionTextView.setText(word.getEnglishVersion());
             russianVersionTextView.setText(word.getRussianVersion());
         }
@@ -52,10 +52,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
 
 
     public void setWords(List<Word> words) {
-        // if (!this.words.isEmpty()) {
         this.words.clear();
-        //}
-
         this.words.addAll(words);
         notifyDataSetChanged();
     }
