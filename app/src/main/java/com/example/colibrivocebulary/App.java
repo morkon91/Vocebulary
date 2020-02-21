@@ -18,11 +18,16 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+
         appDataBase = Room
                 .databaseBuilder(this, AppDataBase.class, "app-database")
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
                 .build();
-    }
 
+
+    }
 
 
 }

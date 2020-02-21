@@ -1,44 +1,37 @@
 package com.example.colibrivocebulary.Activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.os.Build;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.speech.RecognizerIntent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
+import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.colibrivocebulary.Adapter.WordAdapter;
-import com.example.colibrivocebulary.presenter.IWordListView;
-import com.example.colibrivocebulary.presenter.WordPresenter;
 import com.example.colibrivocebulary.R;
 import com.example.colibrivocebulary.entity.Word;
+import com.example.colibrivocebulary.presenter.IWordListView;
+import com.example.colibrivocebulary.presenter.WordPresenter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class WordsActivity extends AppCompatActivity implements IWordListView {
 
-    private Toolbar toolbar;
-    private EditText searchEditText;
     private FloatingActionButton addButton;
     private RecyclerView recyclerView;
 
@@ -47,28 +40,20 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
 
     private WordPresenter wordPresenter = new WordPresenter(this);
 
-    private final TextWatcher searchTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    final int VOICE_INPUT_REQUEST = 999;
+    private ArrayList<String> resultVoiceIn = new ArrayList<>();
 
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            wordPresenter.searchWordByEnglishVersion(searchEditText.getText().toString());
-        }
-    };
+    SearchView searchView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar mActionBarToolbar = findViewById(R.id.toolbar_actionbar);
+        setSupportActionBar(mActionBarToolbar);
+
 
         addButton = findViewById(R.id.add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -79,16 +64,6 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
             }
         });
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        toolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
-        Objects.requireNonNull(getSupportActionBar()).setSubtitle("Очень странный словарик :-)");
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Твой словарик");
-
-        searchEditText = findViewById(R.id.search_edit_text);
-        searchEditText.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-        searchEditText.addTextChangedListener(searchTextWatcher);
 
         recyclerView = findViewById(R.id.word_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -126,6 +101,11 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
 
         if (requestCode == ADD_WORD_REQUEST_CODE && resultCode == RESULT_OK) {
             loadWords();
+        }
+
+        if (requestCode == VOICE_INPUT_REQUEST && resultCode == RESULT_OK) {
+            resultVoiceIn = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            searchView.setQuery(resultVoiceIn.get(0), false);
 
         }
     }
@@ -152,22 +132,53 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar, menu);
+        getMenuInflater().inflate(R.menu.toolbar_menu_items, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Toast.makeText(WordsActivity.this, "Текст:   " + newText, Toast.LENGTH_SHORT).show();
+                wordPresenter.searchWordByEnglishVersion(newText);
+                return false;
+            }
+        });
+
+        final MenuItem voiceSearch = menu.findItem(R.id.action_micro);
+
+        voiceSearch.setOnMenuItemClickListener(item -> {
+            if (voiceIsEnable()) {
+                listenToSpeech();
+            }
+            return true;
+        });
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (searchEditText.getVisibility() != View.VISIBLE) {
-            searchEditText.setVisibility(View.VISIBLE);
-            searchEditText.requestFocus();
-            im.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
-        } else {
-            searchEditText.setVisibility(View.GONE);
-            im.hideSoftInputFromWindow(searchEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-        return true;
+    private void listenToSpeech() {
+
+        Intent listenIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        listenIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getClass().getPackage().getName());
+        listenIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say a word");
+        listenIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        listenIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+
+        startActivityForResult(listenIntent, VOICE_INPUT_REQUEST);
     }
 
+    public boolean voiceIsEnable() {
+        PackageManager packManager = getPackageManager();
+        List<ResolveInfo> intActivities = packManager.queryIntentActivities(new
+                Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+
+        return intActivities.size() != 0;
+    }
 }

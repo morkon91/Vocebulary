@@ -8,10 +8,21 @@ import java.util.Objects;
 
 @Entity
 public class Word {
-    @PrimaryKey
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    @PrimaryKey(autoGenerate = true)
     @NonNull
-    private String englishVersion;
+    private long id;
     private String russianVersion;
+    private String englishVersion;
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -44,7 +55,8 @@ public class Word {
     }
 
     public Word(String russianVersion, String englishVersion) {
-        this.englishVersion = englishVersion;
         this.russianVersion = russianVersion;
+        this.englishVersion = englishVersion;
+
     }
 }

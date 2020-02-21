@@ -15,13 +15,15 @@ public interface WordDao {
     @Insert
     void insert (Word word);
 
-    @Query("SELECT * FROM Word ")
+    @Query("SELECT * FROM Word")
     List<Word> getWords();
 
     @Delete
     void delete (Word word);
 
-    @Query("SELECT * FROM Word WHERE englishVersion LIKE :filterWord")
-    List<Word> filterByEnglishWord(String filterWord);
+    @Query("SELECT * FROM Word WHERE englishVersion LIKE :filterWord OR russianVersion LIKE :filterWord")
+    List<Word> filterByWord(String filterWord);
+
+
 
 }

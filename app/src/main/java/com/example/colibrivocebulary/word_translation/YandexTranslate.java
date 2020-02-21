@@ -53,12 +53,6 @@ public class YandexTranslate {
                 mapJson.put("format", "plain");
                 mapJson.put("options", "1");
 
-                try {
-                    Thread.sleep(700);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
                 Call<TranslateResponse> call = yandexTranslateApi.getTranslate_En_Ru(mapJson, newEnglishWord);
                 try {
                     Response<TranslateResponse> response = call.execute();

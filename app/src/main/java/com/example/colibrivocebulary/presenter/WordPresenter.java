@@ -72,7 +72,7 @@ public class WordPresenter {
 
             @Override
             protected List<Word> doInBackground(Void... voids) {
-                return appDataBase.getWordDao().filterByEnglishWord(searchWord);
+                return appDataBase.getWordDao().filterByWord(searchWord);
             }
 
             @Override
