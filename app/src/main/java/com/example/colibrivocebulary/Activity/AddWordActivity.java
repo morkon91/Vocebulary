@@ -16,7 +16,7 @@ import com.example.colibrivocebulary.word_translation.YandexTranslate;
 
 public class AddWordActivity extends AppCompatActivity implements IAddWordView, ITranslateWordView {
 
-    private EditText wordEditText;
+    private EditText englishWordEditText;
     private EditText translationEditText;
     private Button saveButton;
     private Button translateButton;
@@ -34,23 +34,23 @@ public class AddWordActivity extends AppCompatActivity implements IAddWordView, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_word);
 
-        wordEditText = findViewById(R.id.word_edit_text);
+        englishWordEditText = findViewById(R.id.word_edit_text);
         translationEditText = findViewById(R.id.translation_edit_text);
         saveButton = findViewById(R.id.save_button);
         translateButton = findViewById(R.id.translate_button);
         translateProgressBar = findViewById(R.id.translate_progress_circular);
 
         saveButton.setOnClickListener(v -> {
-            String wordString = wordEditText.getText().toString();
+            String englishWordString = englishWordEditText.getText().toString();
             String translationString = translationEditText.getText().toString();
-            addWordPresenter.addNewWord(wordString, translationString);
+            addWordPresenter.addNewWord(translationString, englishWordString);
         });
 
         translateYandex = new YandexTranslate(AddWordActivity.this);
 
         //Перевод с Яндекс.Переводчиком
         translateButton.setOnClickListener(v -> {
-            String wordString = wordEditText.getText().toString();
+            String wordString = englishWordEditText.getText().toString();
             if (true) {
 
                 translateYandex.getTranslate_EN_RU(wordString);

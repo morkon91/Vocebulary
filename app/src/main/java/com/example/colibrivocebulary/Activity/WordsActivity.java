@@ -3,19 +3,25 @@ package com.example.colibrivocebulary.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +31,7 @@ import com.example.colibrivocebulary.R;
 import com.example.colibrivocebulary.entity.Word;
 import com.example.colibrivocebulary.presenter.IWordListView;
 import com.example.colibrivocebulary.presenter.WordPresenter;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -32,7 +39,7 @@ import java.util.List;
 
 public class WordsActivity extends AppCompatActivity implements IWordListView {
 
-    private FloatingActionButton addButton;
+    private FloatingActionButton addWordFloatingButton;
     private RecyclerView recyclerView;
 
     private static WordAdapter wordAdapter;
@@ -43,7 +50,17 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
     final int VOICE_INPUT_REQUEST = 999;
     private ArrayList<String> resultVoiceIn = new ArrayList<>();
 
-    SearchView searchView;
+    private SearchView searchView;
+
+    private DialogFragment editWordDialogFragment;
+
+    private DialogFragment addWordDialogFragment;
+
+
+    private ConstraintLayout layoutBottomSheetWord;
+    private BottomSheetBehavior mBottomSheetBehavior;
+    private TextView textViewBottomSheetSubtitle;
+    private ImageView imageViewExpand;
 
 
     @Override
@@ -51,19 +68,26 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        layoutBottomSheetWord = findViewById(R.id.bottom_sheet_word);
+        mBottomSheetBehavior = BottomSheetBehavior.from(layoutBottomSheetWord);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        imageViewExpand = findViewById(R.id.expandImageView);
+        textViewBottomSheetSubtitle = findViewById(R.id.bottom_sheet_subtitle);
+
         Toolbar mActionBarToolbar = findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mActionBarToolbar);
 
 
-        addButton = findViewById(R.id.add_button);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        addWordFloatingButton = findViewById(R.id.add_button);
+        addWordFloatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WordsActivity.this, AddWordActivity.class);
-                startActivityForResult(intent, ADD_WORD_REQUEST_CODE);
+                addWordDialogFragment = new DialogAddWord();
+                addWordDialogFragment.show(getSupportFragmentManager(), "addWordDialogFragment");
+//                Intent intent = new Intent(WordsActivity.this, AddWordActivity.class);
+//                startActivityForResult(intent, ADD_WORD_REQUEST_CODE);
             }
         });
-
 
         recyclerView = findViewById(R.id.word_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -79,17 +103,66 @@ public class WordsActivity extends AppCompatActivity implements IWordListView {
             @Override
             public void deleteWord(Word word) {
                 wordPresenter.deleteWordFromList(word);
-
             }
 
             @Override
             public void editWord(Word word) {
-                Toast.makeText(WordsActivity.this, "Запись будет изменена потом " + word.getRussianVersion(), Toast.LENGTH_LONG).show();
+                editWordDialogFragment = new DialogEditWord();
+                editWordDialogFragment.show(getSupportFragmentManager(), "editWordDialogFragment");
+//                Toast.makeText(WordsActivity.this, "Запись будет изменена потом " + word.getRussianVersion(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void showExampleUsingWord(Word word) {
+
+                String wordExample = word.getEnglishVersion();
+
+                switch (mBottomSheetBehavior.getState()) {
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        textViewBottomSheetSubtitle.setText(wordExample);
+                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        if (textViewBottomSheetSubtitle.getText().equals(wordExample)){
+                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                        } else {
+                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                            textViewBottomSheetSubtitle.setText(wordExample);
+                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+                        }
+                        break;
+                }
             }
         });
 
+        mBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (mBottomSheetBehavior.STATE_DRAGGING == newState) {
+                    addWordFloatingButton.animate().scaleX(0).scaleY(0).setDuration(300).start();
+                } else if (mBottomSheetBehavior.STATE_COLLAPSED == newState) {
+                    addWordFloatingButton.animate().scaleX(1).scaleY(1).setDuration(300).start();
+                }
+            }
 
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                imageViewExpand.setRotation(slideOffset * 180);
+//                addWordFloatingButton.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
+            }
+        });
+
+        //открытие BottomSheet нажатием на него
+        layoutBottomSheetWord.setOnClickListener(v -> {
+            if (mBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            } else {
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
     }
+
 
     public void loadWords() {
         wordPresenter.loadWordList();

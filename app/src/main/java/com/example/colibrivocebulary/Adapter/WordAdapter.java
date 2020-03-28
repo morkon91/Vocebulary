@@ -2,18 +2,17 @@ package com.example.colibrivocebulary.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.colibrivocebulary.R;
 import com.example.colibrivocebulary.entity.Word;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,15 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     private Context mContext;
 
     private onPopupClickListener onPopupClickListener;
+
+
+    public interface onPopupClickListener {
+        void deleteWord(Word word);
+
+        void editWord(Word word);
+
+        void showExampleUsingWord(Word word);
+    }
 
     public void setOnPopupClickListener(onPopupClickListener onPopupClickListener) {
         this.onPopupClickListener = onPopupClickListener;
@@ -70,6 +78,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         final Word word = words.get(position);
         holder.bind(word);
 
+
+
         holder.itemView.setOnLongClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(mContext, holder.itemView);
             popupMenu.inflate(R.menu.option_menu);
@@ -90,6 +100,13 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
             return true;
         });
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPopupClickListener.showExampleUsingWord(word);
+            }
+        });
+
     }
 
     @Override
@@ -98,9 +115,5 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     }
 
 
-    public interface onPopupClickListener {
-        void deleteWord(Word word);
 
-        void editWord(Word word);
-    }
 }

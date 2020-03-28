@@ -8,11 +8,11 @@
     android:paddingBottom="16dp">
 
     <TextView
-        android:id="@+id/english_version_text_view"
+        android:id="@+id/russian_version_text_view"
         android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        tools:text="TextView"
+        tools:text="rus_version"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,12 +25,12 @@
         app:layout_constraintGuide_percent="0.50121653" />
 
     <TextView
-        android:id="@+id/russian_version_text_view"
+        android:id="@+id/english_version_text_view"
         android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="TextView" />
+        tools:text="eng_version" />
 </androidx.constraintlayout.widget.ConstraintLayout>
